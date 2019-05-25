@@ -1,0 +1,29 @@
+1. host configure:
+
+cat /sys/module/kvm_intel/parameters/nested  #display Y or N
+
+#onboot enable kvm nested
+cat > /etc/modprobe.d/kvm-intel.conf << EOF
+options kvm_intel nested=1
+options ignore_msrs=1
+EOF
+
+
+modprobe -r kvm_intel   #remove kvm module
+
+modprobe kvm_intel	#reload kvm module
+
+2. vm configure:
+
+virsh edit xxx
+
+ <cpu mode='host-passthrough'/>
+
+Nesting ESXi 6.0 on KVM
+
+host:
+# echo 1 > /sys/module/kvm/parameters/ignore_msrs
+# cat /sys/module/kvm/parameters/ignore_msrs
+
+vm:
+NIC type e1000
