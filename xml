@@ -1,0 +1,2 @@
+virsh dumpxml $1 > /etc/libvirt/qemu/$1.xml
+virsh define /etc/libvirt/qemu/$1.xml

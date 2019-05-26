@@ -1,0 +1,5 @@
+read -p "input vmname: " vm
+read -p "input disk-path: " pd
+read -p "input virtual disk name: " vd
+virsh attach-disk $vm $pd $vd --targetbus=virtio --cache=writeback --subdriver=qcow2
+virsh domblklist $vm

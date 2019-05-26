@@ -1,0 +1,15 @@
+read -p "input vm name:" name
+read -p "input memory size [1024]:" mem
+read -p "input vcpu core [1-3]:" cpu
+read -p "input bridge [br8 br100 br200 br300]:" br
+read -p "VNC port [5920]:" port
+read -p "VNC passwd:" pass
+qemu-img create -f qcow2 /kvm/$name 60g
+virt-install --name $name --virt-type kvm --ram $mem --vcpus $cpu,maxvcpus=4 \
+--boot hd,network,menu=on \
+--import --disk path=/kvm/$name,cache=writeback,bus=virtio \
+--network bridge=$br,model=virtio --graphics vnc,password=$pass,port=$port,listen=0.0.0.0 \
+--noautoconsole --noreboot 
+
+echo "vmname:$name vncport:$port vncpasswd:$pass" >> vm-list
+echo "please start vm and via VNC port $port connection vm"

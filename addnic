@@ -1,0 +1,5 @@
+read -p "input vmname: " vm
+read -p "input type[virtio,e1000]: " type
+read -p "input bridge name: " br
+virsh attach-interface $vm --type bridge --model $type --source $br
+virsh domiflist $vm

@@ -1,0 +1,4 @@
+read -p "input vmname: " vm
+read -p "input disk-path: " pd
+virsh detach-disk $vm $pd
+virsh domblklist $vm

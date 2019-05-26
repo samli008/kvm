@@ -1,0 +1,21 @@
+read -p "interface name:" name
+read -p "ip addr:" addr
+read -p "gateway:" gateway
+read -p "dns:" dns
+
+cat > /etc/sysconfig/network-scripts/ifcfg-$name << EOF
+TYPE=Ethernet
+BOOTPROTO=static
+NAME=$name
+DEVICE=$name
+ONBOOT=yes
+IPADDR=$addr
+NETMASK=255.255.255.0
+GATEWAY=$gateway
+EOF
+
+cat > /etc/resolv.conf << EOF
+nameserver $dns
+EOF
+
+service network restart

@@ -1,0 +1,25 @@
+useradd liyang
+(echo "liyang"; echo "liyang") | smbpasswd -s -a liyang
+mkdir /kvm/share
+chown -R liyang /kvm/share
+chmod 775 /kvm/share
+cat > /etc/samba/smb.conf << EOF
+[global]
+        workgroup = WORKGROUP
+        server string = Samba Server Version %v
+        security = user
+       #smb passwd file = /etc/samba/smbpasswd
+       #config file = /etc/samba/smb.conf.%U
+        username map = /etc/samba/smbusers
+        display charset = cp936
+        unix charset = cp936
+        dos charset = cp936
+[share]
+        comment = smb
+        path = /kvm/share
+        valid users = +liyang
+        write list = +liyang
+EOF
+cat > /etc/samba/smbusers << EOF
+liyang = admin
+EOF
