@@ -14,3 +14,14 @@ virsh list
 #delete default bridge
 virsh net-destroy default
 virsh net-undefine default
+
+#vm connect serial port
+virsh edit xxx 
+
+    <serial type='dev'>
+      <source path='/dev/ttyS0'/>
+      <target port='1'/>
+    </serial>
+
+#virsh console vm; on vm type below:
+grubby --update-kernel=ALL --args="console=ttyS0"
