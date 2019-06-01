@@ -1,4 +1,4 @@
-1. host configure:
+# host configure:
 
 cat /sys/module/kvm_intel/parameters/nested  #display Y or N
 
@@ -13,17 +13,11 @@ modprobe -r kvm_intel   #remove kvm module
 
 modprobe kvm_intel	#reload kvm module
 
-2. vm configure:
+#update qeum-kvm
 
-virsh edit xxx
-
- <cpu mode='host-passthrough'/>
-
-Nesting ESXi 6.0 on KVM
-
-host:
-# echo 1 > /sys/module/kvm/parameters/ignore_msrs
-# cat /sys/module/kvm/parameters/ignore_msrs
-
-vm:
-NIC type e1000
+/usr/libexec/qemu-kvm -version
+yum -y install centos-release-qemu-ev
+sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-QEMU-EV.repo
+yum --enablerepo=centos-qemu-ev -y install qemu-kvm-ev
+systemctl restart libvirtd
+/usr/libexec/qemu-kvm -version
