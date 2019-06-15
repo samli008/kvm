@@ -1,0 +1,30 @@
+read -p "input vm type [c7]:" vm
+vm=${vm:-c7}
+read -p "input vm name:" name
+read -p "input memory size 8[G]:" mem
+mem=${mem:-8}
+mem=$((mem*1024))
+read -p "input vcpu core [2]:" cpu
+cpu=${cpu:-2}
+read -p "input bridge [br0]:" br
+br=${br:-br0}
+read -p "VNC port [5921]:" port
+port=${port:-5921}
+read -p "VNC passwd:[liyang]" pass
+pass=${pass:-liyang}
+cp /kvm/$vm /kvm/$name
+virt-install --name $name --virt-type kvm --ram $mem --vcpus $cpu,maxvcpus=40 \
+--import --disk path=/kvm/$name,bus=virtio \
+--cpu host-passthrough \
+--network bridge=$br,model=virtio --graphics vnc,password=$pass,port=$port,listen=0.0.0.0 \
+--machine q35 \
+--noautoconsole --noreboot 
+
+cp /etc/libvirt/qemu/$name.xml /kvm/xml/$name.xml
+virsh undefine $name
+sed -i "/<\/console>/a <input type='tablet' bus='usb'\/>" /kvm/xml/$name.xml
+virsh define /kvm/xml/$name.xml
+virsh start $name
+
+echo "vmname:$name vncport:$port vncpasswd:$pass" >> /kvm/vm-list
+echo "please start vm and via VNC port $port connection vm"
