@@ -1,0 +1,74 @@
+#install kvm
+yum -y install qemu-kvm qemu-kvm-tools libvirt virt-install bridge-utils novnc
+
+systemctl start libvirtd
+systemctl enable libvirtd
+
+grep -c vmx /proc/cpuinfo
+
+#install docker and load webvirtmgr image
+yum -y install docker
+systemctl enable docker
+systemctl start docker
+
+docker pull unws/webvirtmgr
+docker load < webvirtmgr.tar
+
+mkdir -p /data/vm
+groupadd -g 1010 webvirtmgr
+useradd -u 1010 -g webvirtmgr -s /sbin/nologin -d /data/vm webvirtmgr
+chown -R webvirtmgr:webvirtmgr /data/vm
+
+docker run -d -p 8080:8080 -p 6080:6080 --name webvirtmgr -v /data/vm:/data/vm --restart=always web:v1
+
+docker container update --restart=always webvirtmgr
+
+cat > /etc/default/libvirt-bin << EOF
+start_libvirtd="yes"
+libvirtd_opts="-d -l"
+EOF
+
+cat > /etc/libvirt/libvirt.conf << EOF
+listen_tls = 0
+listen_tcp = 1
+listen_addr = "0.0.0.0"
+unix_sock_group = "libvirtd"
+unix_sock_ro_perms = "0777"
+unix_sock_rw_perms = "0770"
+auth_unix_ro = "none"
+auth_unix_rw = "none"
+auth_tcp = "none"
+auth_tls = "none"
+EOF
+
+cat > /etc/libvirt/qemu.conf << EOF
+vnc_tls = 0
+EOF
+
+systemctl restart libvirtd
+
+#login to docker edit webvirtmgr
+docker exec -it webvirtmgr /bin/bash
+
+#modify novnc config
+sed -i 's/172.17.42.1/0.0.0.0/g' /webvirtmgr/vrtManager/create.py
+
+#modify default admin passwd
+cd /webvirtmgr
+python manage.py changepassword admin
+
+#create new supperuser
+cd /webvirtmgr
+python manage.py createsuperuser
+
+#modify webvirtmgr user not passwd login to kvm host
+su - webvirtmgr -s /bin/bash
+
+ssh-keygen -q -P '' -t rsa -f /data/vm//.ssh/id_rsa
+touch ~/.ssh/config && echo -e "StrictHostKeyChecking=no\nUserKnownHostsFile=/dev/null" >> ~/.ssh/config
+chmod 0600 ~/.ssh/config
+
+ssh-copy-id root@192.168.6.171
+
+#login webvirtmgr default user:admin passwd:1234
+http://192.168.6.171:8080

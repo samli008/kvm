@@ -1,0 +1,18 @@
+cat >> /root/.bash_profile << EOF
+alias re='systemctl restart'
+alias list='virsh list --all'
+alias start='virsh start'
+alias del='virsh undefine'
+alias stop='virsh destroy'
+alias shutdown='virsh shutdown'
+alias sl='virsh snapshot-list'
+alias sc='virsh snapshot-create-as'
+alias sr='virsh snapshot-revert'
+alias sd='virsh snapshot-delete'
+alias vnc='virsh vncdisplay'
+alias hi='history -c'
+alias li='virsh list'
+alias nic='virsh domiflist'
+alias disk='virsh domblklist'
+alias fd='fdisk -l|grep sd'
+EOF
