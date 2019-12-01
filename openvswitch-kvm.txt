@@ -28,6 +28,9 @@ ovs-vsctl show
             Interface "em2"
     ovs_version: "2.5.0"
 
+ovs-vsctl clear port em2 trunks
+ovs-vsctl clear port vnet1 tag
+
 # create kvm net.xml
 cat > net.xml << EOF
 <network>
