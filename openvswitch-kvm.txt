@@ -1,0 +1,40 @@
+# install openvswitch
+tar xzvf openvswitch.tar
+cd openvswitch
+rpm -ivh libatomic-4.8.5-39.el7.x86_64.rpm
+rpm -ivh openvswitch-2.5.rpm
+systemctl enable openvswitch
+systemctl start openvswitch
+
+# create ovs-bridge
+ovs-vsctl add-br br100
+ovs-vsctl add-port br100 em2
+ovs-vsctl show
+099059ba-dd23-4382-ba25-f07f216ad43d
+    Bridge "br100"
+        Port "br100"
+            Interface "br100"
+                type: internal
+        Port "vnet1"
+            Interface "vnet1"
+        Port "em2"
+            Interface "em2"
+    ovs_version: "2.5.0"
+
+# create kvm net.xml
+cat > net.xml << EOF
+<network>
+      <name>br100</name>
+      <forward mode='bridge'/>
+      <bridge name='br100'/>
+      <virtualport type='openvswitch'/>
+</network>
+EOF
+
+virsh net-define net.xml
+virsh net-list --all
+virsh net-start br100
+virsh net-autostart br100
+
+virsh net-undefine br100
+virsh net-destroy br100
