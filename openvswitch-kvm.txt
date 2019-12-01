@@ -10,14 +10,21 @@ systemctl start openvswitch
 ovs-vsctl add-br br100
 ovs-vsctl add-port br100 em2
 ovs-vsctl show
+ovs-vsctl set port vnet1 tag=100
+ovs-vsctl set port br100 tag=100
+ovs-vsctl set port em2 trunks=100,101
+ovs-vsctl show
 099059ba-dd23-4382-ba25-f07f216ad43d
     Bridge "br100"
         Port "br100"
+            tag: 100
             Interface "br100"
                 type: internal
         Port "vnet1"
+            tag: 100
             Interface "vnet1"
         Port "em2"
+            trunks: [100, 101]
             Interface "em2"
     ovs_version: "2.5.0"
 
