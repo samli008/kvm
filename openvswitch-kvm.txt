@@ -31,6 +31,14 @@ ovs-vsctl show
 ovs-vsctl clear port em2 trunks
 ovs-vsctl clear port vnet1 tag
 
+# physical server connection vm nic
+ip link add br-tap100 type veth peer name tap100
+ovs-vsctl add-port br100 br-tap100
+ovs-vsctl set port br-tap100 tag=100
+ip addr add 192.168.7.100/24 dev tap100
+ip link set tap100 up
+ip link set br-tap100 up
+
 # create kvm net.xml
 cat > net.xml << EOF
 <network>
