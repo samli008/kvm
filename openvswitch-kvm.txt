@@ -46,6 +46,11 @@ cat > net.xml << EOF
       <forward mode='bridge'/>
       <bridge name='br100'/>
       <virtualport type='openvswitch'/>
+      <portgroup name='vlan100'>
+       <vlan>
+        <tag id='100'/>
+       </vlan>
+      </portgroup>
 </network>
 EOF
 
