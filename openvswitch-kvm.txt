@@ -58,12 +58,28 @@ virsh net-define net.xml
 virsh net-list --all
 virsh net-start br100
 virsh net-autostart br100
+virsh net-dumpxml br100
 
 virsh net-undefine br100
 virsh net-destroy br100
 
-# ontap select deploy-vm create with openvswith br100 portgroup vlan200; default admin admin123
+# ontap select deploy-vm create with openvswith br100 portgroup vlan200
 virt-install --name=deploy --vcpus=2 --ram=4096 --os-type=linux \
 --controller=scsi,model=virtio-scsi \
 --disk path=/kvm/select1,device=disk,bus=scsi,format=raw \
 --network network=br100,portgroup=vlan200,model=virtio,virtualport_type=openvswitch --console=pty --import --wait 0
+
+# config deploy-vm with default admin admin123
+virsh console deploy
+
+# config virsh storage pool
+virsh pool-define-as select_pool logical --source-dev /dev/sdb --target=/dev/select_pool
+
+virsh pool-build select_pool
+virsh pool-start select_pool
+virsh pool-autostart select_pool
+virsh pool-list --all
+virsh pool-list
+
+virsh pool-destroy select_pool
+virsh pool-undefine select_pool
