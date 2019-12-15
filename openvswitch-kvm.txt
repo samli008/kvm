@@ -62,7 +62,7 @@ virsh net-autostart br100
 virsh net-undefine br100
 virsh net-destroy br100
 
-# ontap select deploy-vm create with openvswith br100 portgroup vlan200
+# ontap select deploy-vm create with openvswith br100 portgroup vlan200; default admin admin123
 virt-install --name=deploy --vcpus=2 --ram=4096 --os-type=linux \
 --controller=scsi,model=virtio-scsi \
 --disk path=/kvm/select1,device=disk,bus=scsi,format=raw \
