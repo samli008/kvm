@@ -72,7 +72,12 @@ virt-install --name=deploy --vcpus=2 --ram=4096 --os-type=linux \
 # config deploy-vm with default admin admin123
 virsh console deploy
 
-# config virsh storage pool
+deploy network show
+host show
+cluster show
+node show
+
+# config virsh storage pool on kvm host
 virsh pool-define-as select_pool logical --source-dev /dev/sdb --target=/dev/select_pool
 
 virsh pool-build select_pool
