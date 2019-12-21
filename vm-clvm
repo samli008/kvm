@@ -1,0 +1,28 @@
+read -p "input vm name:" name
+read -p "input memory size 1[G]:" mem
+mem=${mem:-1}
+mem=$((mem*1024))
+read -p "input vcpu core [1]:" cpu
+cpu=${cpu:-1}
+read -p "input vlan [vlan200]:" vlan
+vlan=${vlan:-vlan200}
+read -p "VNC port [5921]:" port
+port=${port:-5921}
+read -p "VNC passwd:[liyang]" pass
+pass=${pass:-liyang}
+
+lvcreate -n $name -L 40G cml
+virt-install --name $name --virt-type kvm --ram $mem --vcpus $cpu,maxvcpus=40 \
+--boot hd,network,menu=on \
+--import --disk path=/dev/cml/$name,cache=none,bus=virtio \
+--network network=br100,portgroup=$vlan,model=virtio --graphics vnc,password=$pass,port=$port,listen=0.0.0.0 \
+--noautoconsole --noreboot 
+
+cp /etc/libvirt/qemu/$name.xml /kvm/xml/$name.xml
+virsh undefine $name
+sed -i "/<\/console>/a <input type='tablet' bus='usb'\/>" /kvm/xml/$name.xml
+virsh define /kvm/xml/$name.xml
+virsh start $name
+
+echo "vmname:$name vncport:$port vncpasswd:$pass" >> /kvm/vm-list
+echo "please start vm and via VNC port $port connection vm"
