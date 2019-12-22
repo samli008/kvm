@@ -1,0 +1,52 @@
+#!ipxe
+######## MAIN MENU ###################
+:start
+menu Welcome to iPXE's Boot Menu
+item
+item c74pe      Boot c74pe
+item c74ks	Boot c74ks
+item 2012pe	Boot 2012pe
+item c76ks	Boot c76ks
+item shell      Enter iPXE shell
+item reboot     Reboot
+item
+item exit       Exit (boot local disk)
+choose --default c74ks --timeout 10000 target && goto ${target}
+
+## Utility menu items:
+:shell
+echo Type exit to get the back to the menu
+shell
+set menu-timeout 0
+goto start
+
+:reboot
+reboot
+
+:exit
+exit
+
+:c74pe
+kernel -n img /c74/vmlinuz inst.stage2=http://192.168.30.111/ rescue quiet
+initrd /c74/initrd.img 
+boot img
+
+:2012pe
+kernel wimboot
+initrd /bcd         BCD
+initrd /boot.sdi    boot.sdi
+initrd /2012.wim    2012.wim
+boot
+
+:c74ks
+kernel -n img /c74/vmlinuz modprobe.blacklist=cnic,bnx2i net.ifnames=0 biosdevname=0 ks=http://192.168.20.147/ks.cfg ksdevice=eth0
+initrd /c74/initrd.img 
+boot img
+
+:c76ks
+kernel -n img /c76/vmlinuz modprobe.blacklist=cnic,bnx2i net.ifnames=0 biosdevname=0 ks=http://192.168.30.111/ks.cfg ksdevice=eth0
+initrd /c76/initrd.img 
+boot img
+
+:esxi
+sanboot --drive 0x80 http://192.168.30.111/esxi65.iso
