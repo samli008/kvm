@@ -10,8 +10,12 @@ rootpw liyang
 timezone --utc Asia/Shanghai
 # Network information
 network  --bootproto=dhcp --device=eth0 --onboot=on
+
 # Use network installation
 url --url=http://192.168.20.147/c74
+# Use USB installation
+#harddrive --partition=/dev/sdb1 --dir=/c74
+
 # System language
 lang zh_CN.UTF-8
 # Firewall configuration
@@ -21,7 +25,7 @@ auth  --useshadow  --passalgo=sha512
 # Use graphical install
 text
 firstboot --enable
-ignoredisk --only-use=vda
+ignoredisk --only-use=sda
 # SELinux configuration
 selinux --disabled
 # System bootloader configuration
@@ -29,9 +33,9 @@ bootloader --location=mbr
 # Clear the Master Boot Record
 zerombr
 # Partition clearing information
-clearpart --all --initlabel --drives=vda
-part /boot --fstype ext4 --size=500 --ondisk vda
-part pv.01 --size 5000 --grow --ondisk vda
+clearpart --all --initlabel --drives=sda
+part /boot --fstype ext4 --size=500 --ondisk sda
+part pv.01 --size 5000 --grow --ondisk sda
 
 volgroup vg1 pv.01
 
