@@ -1,0 +1,49 @@
+# Install OS instead of upgrade
+install
+# Keyboard layouts
+keyboard us
+# Reboot after installation
+reboot
+# Root password
+rootpw liyang
+# System timezone
+timezone --utc Asia/Shanghai
+# Network information
+network  --bootproto=dhcp --device=eth0 --onboot=on
+# Use network installation
+url --url=http://192.168.20.147/c74
+# System language
+lang zh_CN.UTF-8
+# Firewall configuration
+firewall --disabled
+# System authorization information
+auth  --useshadow  --passalgo=sha512
+# Use graphical install
+text
+firstboot --enable
+ignoredisk --only-use=vda
+# SELinux configuration
+selinux --disabled
+# System bootloader configuration
+bootloader --location=mbr
+# Clear the Master Boot Record
+zerombr
+# Partition clearing information
+clearpart --all --initlabel --drives=vda
+part /boot --fstype ext4 --size=500 --ondisk vda
+part pv.01 --size 5000 --grow --ondisk vda
+
+volgroup vg1 pv.01
+
+logvol / --vgname=vg1 --size=10000 --name=root
+logvol swap --vgname=vg1 --size=2000 --name=swap --fstype=swap
+
+%packages
+@core
+%end
+
+%post
+cat > /root/tools << EOF
+yum -y install wget net-tools lrzsz ftp screen
+EOF
+%end
