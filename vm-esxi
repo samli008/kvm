@@ -1,24 +1,30 @@
-read -p "input vm type [esxi65]:" vm
-vm=${vm:-esxi65}
-read -p "input vm name:" name
-read -p "input memory size 4[G]:" mem
-mem=${mem:-4}
+read -p "input vm name:[e01]" name
+name=${name:-e01}
+read -p "input local disk [disk01]:" disk
+disk=${disk:-disk01}
+read -p "input memory size 8[G]:" mem
+mem=${mem:-8}
 mem=$((mem*1024))
 read -p "input vcpu core [2]:" cpu
 cpu=${cpu:-2}
-read -p "input bridge [br0]:" br
-br=${br:-br0}
+read -p "input vlan [vlan200]:" vlan
+vlan=${vlan:-vlan200}
 read -p "VNC port [5921]:" port
 port=${port:-5921}
 read -p "VNC passwd:[liyang]" pass
 pass=${pass:-liyang}
-cp /kvm/$vm /kvm/$name
+
+cp /kvm/esxi /kvm/$name
+qemu-img create -f qcow2 /kvm/$disk 500G
+
 virt-install --name $name --virt-type kvm --ram $mem --vcpus $cpu,maxvcpus=40 \
 --import --disk path=/kvm/$name,bus=sata \
+--import --disk path=/kvm/$disk,bus=ide \
 --cpu host-passthrough \
---network bridge=$br,model=e1000 --graphics vnc,password=$pass,port=$port,listen=0.0.0.0 \
---features kvm_hidden=on \
---machine q35 \
+--network network=br100,portgroup=$vlan,model=e1000 \
+--network network=br100,portgroup=vlan200,model=e1000 \
+--network network=br100,portgroup=vlan200,model=e1000 \
+--graphics vnc,password=$pass,port=$port,listen=0.0.0.0 \
 --noautoconsole --noreboot 
 
 cp /etc/libvirt/qemu/$name.xml /kvm/xml/$name.xml
