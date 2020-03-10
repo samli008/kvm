@@ -5,7 +5,8 @@ systemctl start libvirtd
 systemctl enable libvirtd
 
 #view VT and KVM module
-grep -c vmx /proc/cpuinfo lsmod | grep kvm
+grep -c vmx /proc/cpuinfo
+lsmod | grep kvm
 
 #view vm list
 virsh list --all
