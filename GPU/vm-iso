@@ -1,4 +1,5 @@
 # view NVIDIA card id for vm
+lspci -nn |grep -i nvidia
 [root@GG33D33-172-31-1-5 ~]# lspci -n |grep 10de
 18:00.0 0302: 10de:1eb8 (rev a1)
 3b:00.0 0302: 10de:1eb8 (rev a1)
@@ -8,21 +9,12 @@
 87:00.0 0302: 10de:1eb8 (rev a1)
 af:00.0 0302: 10de:1eb8 (rev a1)
 
-# Turn on IOMMU in GRUB. Edit file /etc/default/grub and add parameters to the kernel
+# Edit GRUB entries include intel_iommu=on
 vi /etc/default/grub 
-GRUB_TIMEOUT=5
-GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
-GRUB_DEFAULT=saved
-GRUB_DISABLE_SUBMENU=true
-GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="crashkernel=auto intel_iommu=on iommu=pt pci=realloc pci=nocrsrd blacklist=nouveau nouveau.modeset=0 pci-stub.ids=10de:1eb8 rhgb quiet"
-GRUB_DISABLE_RECOVERY="true"
 
 # IOMMU config in grub to take effect need reboot.
 grub2-mkconfig -o /boot/grub2/grub.cfg
-
-# check IOMMU
-dmesg | grep 'IOMMU enabled'
 
 # blacklist
 vi /etc/modprobe.d/blacklist.conf 
@@ -33,8 +25,15 @@ options nouveau modeset=0
 lsmod |grep nouveau
 
 # VFIO
+vi /etc/modprobe.d/vfio.conf
+options vfio-pci ids=10de:1eb8
+
 vi /etc/modules-load.d/vfio-pci.conf 
-ovfio-pci
+vfio-pci
+
+# check IOMMU VFIO
+dmesg | grep 'IOMMU enabled'
+dmesg | grep -i vfio
 
 # create win2016 vm with script
 read -p "input vm iso name: " iso
