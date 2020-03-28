@@ -25,11 +25,12 @@ EOF
 # check nouveau disable
 lsmod |grep nouveau
 
-# VFIO
+# Add your kernel module for VFIO-PCI
 cat > /etc/modprobe.d/vfio.conf << EOF
 options vfio-pci ids=10de:1eb8
 EOF
 
+# Add an entry to automatically load the module
 cat > /etc/modules-load.d/vfio-pci.conf << EOF
 vfio-pci
 EOF
