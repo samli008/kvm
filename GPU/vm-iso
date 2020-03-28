@@ -1,3 +1,4 @@
+# view NVIDIA card id for vm
 [root@GG33D33-172-31-1-5 ~]# lspci -n |grep 10de
 18:00.0 0302: 10de:1eb8 (rev a1)
 3b:00.0 0302: 10de:1eb8 (rev a1)
