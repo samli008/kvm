@@ -46,6 +46,8 @@ cat > /etc/modules-load.d/vfio-pci.conf << EOF
 vfio-pci
 EOF
 
-# check IOMMU VFIO
+# Confirm IOMMU is functioning
 dmesg | grep 'IOMMU enabled'
+
+# Confirm VIFO is functioning
 dmesg | grep -i vfio
