@@ -1,0 +1,35 @@
+[root@GG33D33-172-31-1-5 ~]# lspci -n |grep 10de
+18:00.0 0302: 10de:1eb8 (rev a1)
+3b:00.0 0302: 10de:1eb8 (rev a1)
+5e:00.0 0302: 10de:1eb8 (rev a1)
+5f:00.0 0302: 10de:1eb8 (rev a1)
+86:00.0 0302: 10de:1eb8 (rev a1)
+87:00.0 0302: 10de:1eb8 (rev a1)
+af:00.0 0302: 10de:1eb8 (rev a1)
+
+# create win2016 vm with script
+read -p "input vm iso name: " iso
+read -p "input vm name:" name
+read -p "input memory size [24]G:" mem
+mem=${mem:-24}
+mem=$((mem*1024))
+read -p "input vcpu core [8]:" cpu
+cpu=${cpu:-8}
+read -p "VNC port [5921]:" port
+port=${port:-5921}
+read -p "VNC passwd:" pass
+pass=${pass:-liyang}
+qemu-img create -f qcow2 /vmpool/$name 100g
+virt-install --name $name --virt-type kvm --ram $mem --vcpus $cpu,maxvcpus=12 \
+--cdrom=/vmpool/iso/$iso --disk path=/vmpool/$name \
+--network bridge=ovirtmgmt,model=virtio --graphics vnc,password=$pass,port=$port,listen=0.0.0.0 \
+--noautoconsole --noreboot \
+--hostdev 18:00.0
+
+cp /etc/libvirt/qemu/$name.xml /vmpool/xml/$name.xml
+virsh undefine $name
+sed -i "/<\/console>/a <input type='tablet' bus='usb'\/>" /vmpool/xml/$name.xml
+virsh define /vmpool/xml/$name.xml
+
+echo "vmname:$name vncport:$port vncpasswd:$pass" >> /vmpool/vm-list
+echo "please start vm and via VNC port $port connection vm"

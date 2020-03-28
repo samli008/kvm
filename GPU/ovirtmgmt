@@ -1,0 +1,25 @@
+cat > /etc/sysconfig/network-scripts/ifcfg-bond0 << EOF
+TYPE=Bond
+BOOTPROTO=none
+NAME=bond0
+DEVICE=bond0
+ONBOOT=yes
+BONDING_MASTER=yes
+BONDING_OPTS="mode=balance-alb miimon=100 updelay=0 downdelay=0"
+BRIDGE=ovirtmgmt
+EOF
+
+cat > /etc/sysconfig/network-scripts/ifcfg-ovirtmgmt << EOF
+DEVICE=ovirtmgmt
+TYPE=Bridge
+ONBOOT=yes
+BOOTPROTO=none
+IPADDR=172.31.1.5
+PREFIX=24
+GATEWAY=172.31.1.1
+DNS1=61.139.2.69
+EOF
+
+ifup $int
+ifup $br
+brctl show |grep $br
