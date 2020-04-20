@@ -1,5 +1,5 @@
 # config fence virtd on kvm host
-yum install fence-virtd fence-virtd-multicast fence-virtd-libvirt fence-virt*
+yum -y install fence-virtd fence-virtd-multicast fence-virtd-libvirt fence-virt*
 mkdir -p /etc/cluster
 echo fecb9e62cbcf4e54dcfb > /etc/cluster/fence_xvm.key
 
