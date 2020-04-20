@@ -30,3 +30,37 @@ pcs stonith create fence2 fence_xvm multicast_address=225.0.0.12
 
 pcs stonith show
 pcs stonith fence vm2
+
+# fence_xvm on openvswtich networking
+## add tap on physical host
+ip link add br-tap100 type veth peer name tap100
+ovs-vsctl add-port br100 br-tap100
+ovs-vsctl set port br-tap100 tag=200
+ip addr add 192.168.20.11/24 dev tap100
+ip link set tap100 up
+ip link set br-tap100 up
+
+## fence_virtd -c and cat /etc/fence_virt.conf
+fence_virtd {
+        listener = "multicast";
+        backend = "libvirt";
+        module_path = "/usr/lib64/fence-virt";
+}
+
+listeners {
+        multicast {
+                key_file = "/etc/cluster/fence_xvm.key";
+                address = "225.0.0.12";
+                interface = "tap100";
+                family = "ipv4";
+                port = "1229";
+        }
+
+}
+
+backends {
+        libvirt {
+                uri = "qemu:///system";
+        }
+
+}
