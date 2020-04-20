@@ -16,9 +16,12 @@ fence_xvm -o reboot -H vm1
 fence_xvm -o status -H vm1 
 
 # config pcs stonith on kvm-guest-vm
-yum install fence-virt* -y
+yum -y install fence-virt
 mkdir -p /etc/cluster
 echo fecb9e62cbcf4e54dcfb > /etc/cluster/fence_xvm.key
+
+# view vm list on kvm-guset-vm, must need vm-bridge has ip address
+fence_xvm -o list
 
 pcs property set stonith-enabled=true
 
