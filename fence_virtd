@@ -1,0 +1,27 @@
+# config fence virtd on kvm host
+yum install fence-virtd fence-virtd-multicast fence-virtd-libvirt fence-virt*
+mkdir -p /etc/cluster
+echo fecb9e62cbcf4e54dcfb > /etc/cluster/fence_xvm.key
+
+fence_virtd -c
+
+systemctl enable fence_virtd
+systemctl start fence_virtd
+systemctl status fence_virtd
+
+fence_xvm -o list
+fence_xvm -o off -H vm1 
+fence_xvm -o on -H vm1 
+fence_xvm -o reboot -H vm1 
+fence_xvm -o status -H vm1 
+
+# config pcs stonith on kvm-guest-vm
+mkdir -p /etc/cluster
+echo fecb9e62cbcf4e54dcfb > /etc/cluster/fence_xvm.key
+
+pcs property set stonith-enabled=true
+
+pcs stonith create fence1 fence_xvm multicast_address=225.0.0.12
+pcs stonith create fence2 fence_xvm multicast_address=225.0.0.12
+
+pcs stonith show
