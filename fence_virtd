@@ -16,6 +16,7 @@ fence_xvm -o reboot -H vm1
 fence_xvm -o status -H vm1 
 
 # config pcs stonith on kvm-guest-vm
+yum install fence-virt* -y
 mkdir -p /etc/cluster
 echo fecb9e62cbcf4e54dcfb > /etc/cluster/fence_xvm.key
 
@@ -25,3 +26,4 @@ pcs stonith create fence1 fence_xvm multicast_address=225.0.0.12
 pcs stonith create fence2 fence_xvm multicast_address=225.0.0.12
 
 pcs stonith show
+pcs stonith fence vm2
