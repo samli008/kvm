@@ -6,8 +6,8 @@ mem=${mem:-1}
 mem=$((mem*1024))
 read -p "input vcpu core [1]:" cpu
 cpu=${cpu:-1}
-read -p "input vlan [vlan200]:" vlan
-vlan=${vlan:-vlan200}
+read -p "input vlan [vlan100]:" vlan
+vlan=${vlan:-vlan100}
 read -p "VNC port [5921]:" port
 port=${port:-5921}
 read -p "VNC passwd:[liyang]" pass
