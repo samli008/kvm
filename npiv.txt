@@ -58,7 +58,7 @@ virsh nodedev-destroy scsi_host6
 virsh nodedev-list |grep scsi_host
 
 # use switchshow portshow conmmands on B300 FC-switch and create zone with NPIV
-etho "1" > /sys/class/fc_host/host0/issue_lip
+echo "1" > /sys/class/fc_host/host0/issue_lip
 
 # Pool uses WWPN and WWNN of the scsi_host5 vHBA in the following XML file: 
 pool.xml
