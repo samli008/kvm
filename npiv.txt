@@ -58,4 +58,26 @@ virsh nodedev-list |grep scsi_host
 
 # use switchshow portshow conmmands on B300 FC-switch and create zone with NPIV
 
+# Pool uses WWPN and WWNN of the scsi_host5 vHBA in the following XML file: 
+pool.xml
+<pool type="scsi">
+    <name>npiv-pool</name>
+    <target>
+        <path>/dev/disk/by-path</path>
+    </target>
+    <source><adapter type="scsi_host" wwnn="5001a4ad29ceb11d" wwpn="5001a4af357df7f9" /></source>
+</pool>
 
+virsh pool-define pool.xml
+virsh pool-start npiv-pool
+virsh vol-list npiv-pool --details
+
+# Create a volume XML using this LUN and hot/cold attach to a guest.
+volume-atch.xml
+<disk type='volume' device='disk'>
+     <driver name='qemu' type='raw'/>
+     <source pool='npiv-pool' volume='unit:0:1:0'/>
+     <target dev='sdc' bus='scsi'/>
+</disk>
+
+virsh attach-disk <guest-name> volume-atch.xml
