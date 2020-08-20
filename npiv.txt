@@ -1,5 +1,4 @@
 # NPIV is a Fibre Channel (FC) technology to share a single physical Fibre Channel host bus adapter (HBA) as multiple virtual ports
- 
 # check HBA support NPIV
 [root@c01 ~]# virsh nodedev-list --cap vports
 scsi_host0
