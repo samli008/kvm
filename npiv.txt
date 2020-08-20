@@ -36,6 +36,8 @@ cat > vhba.xml << EOF
 </device>
 EOF
 
+virsh nodedev-create vhba.xml
+
 # view vHBA
 [root@c01 ~]# virsh nodedev-dumpxml scsi_host5
 <device>
